@@ -1,0 +1,82 @@
+* {
+  font-family: verdana, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 20px;
+    padding: 0;
+}
+
+h1{
+    text-align: center;
+}
+
+#map {
+    height: 80%;
+    width: 73%;
+    border: 2px solid black;
+    margin-top: 20px;
+    display: inline-block;
+    /*position: relative;*/
+
+}
+
+#submit_address{
+    text-align: center;
+}
+
+#locations{
+    height: 80%;
+    width: 25%;
+    /*border: 2px solid black;*/
+    margin: 20px 0px 0px 0px;
+    display: inline-block;
+    text-align: center;
+    /*position: fixed;*/
+    margin-left: 2px;
+    vertical-align: top;
+
+}
+
+.user_button{
+    padding: 5px 10px;
+    margin: 15px 5px 5px 5px;
+    border-radius: 2px;
+    border: 0px solid black;
+    text-decoration: none;
+    color: black;
+}
+
+#table_container{
+    height: 80%;
+    overflow: scroll;  
+}
+
+#table_dash{
+    margin: 0 auto;
+}
+td, th{
+    text-align: center;
+    padding: 0 10px;
+}
+#intro{
+    width: 50%;
+    text-align: center;
+    padding-left: 140px;
+}
+#locations2{
+    height: 80%;
+    width: 25%;
+    /*border: 2px solid black;*/
+    margin: 20px 0px 0px 0px;
+    display: inline-block;
+    text-align: center;
+    /*position: fixed;*/
+    margin-left: 2px;
+    vertical-align: top;
+}
+#bigdiv{
+    display: block;
+    height: 800px;
+}

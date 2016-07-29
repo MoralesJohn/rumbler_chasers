@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit Profile</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="/static/css/styles.css" type="text/css">
+</head>
+<body>
+<a href="/"><button class = 'user_button'>Return to Dashboard</button></a>
+<h2>Edit your Profile</h2>
+<form action = '/users/edit_phone' method='POST'>
+	<input type="text" name="phone" value = "{{user['phone']}}">
+	<input class = 'user_button' type="submit" value = 'Edit Number'>
+</form>
+</body>
+</html>

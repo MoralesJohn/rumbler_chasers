@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Delete Location</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+</head>
+<body>
+<a href="/"><button class = 'user_button'>Return to Dashboard</button></a>
+<h2>Are you sure?</h2>
+<p>Are you sure you want to delete the location "{{location['loc_name']}}?"</p>
+<a href="/locations/delete_location/{{location['id']}}"><button class='user_button'>Delete Location</button></a>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Rumbler Chaser</title>
+	<meta name="description" content="Group project in Pylot and MySQL for Earthquake alerts..">
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/css/styles.css" type="text/css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!-- *************** MAP SCRIPT ***************** -->
+    <script>
+    // [START script-body]
+    var map;
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: {{dash_latitude}}, lng: {{dash_longitude}} },
+          zoom: {{dash_zoom}}
+        });
+    // Get the earthquake data (JSONP format)
+        var script = document.createElement('script');
+        script.src='http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojsonp';
+        document.getElementsByTagName('head')[0].appendChild(script);
+    // Add a basic style.
+        map.data.setStyle(function(feature) {
+            var mag = Math.exp(parseFloat(feature.getProperty('mag'))) * 0.1;
+            return /** @type {google.maps.Data.StyleOptions} */({
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: mag,
+                    fillColor: '#f00',
+                    fillOpacity: 0.35,
+                    strokeWeight: 0
+                }
+            });
+        });
+    }
+    // Defines the callback function referenced in the jsonp file.
+    function eqfeed_callback(data) {
+        map.data.addGeoJson(data);
+    }
+    // [END script-body]
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=KEEEE&callback=initMap">
+    </script>
+    <script>
+            // This is called with the results from from FB.getLoginStatus().
+            function statusChangeCallback(response) {
+                console.log('statusChangeCallback');
+                console.log(response);
+                document.getElementById('fbid').value = response.authResponse.accessToken
+                // The response object is returned with a status field that lets the
+                // app know the current login status of the person.
+                // Full docs on the response object can be found in the documentation
+                // for FB.getLoginStatus().
+                if (response.status === 'connected') {
+                    // Logged into your app and Facebook.
+                    // var uid = response.authResponse.userID;
+                    // var accessToken = response.authresponse.accessToken
+                    console.log("testapi")
+                    testAPI();
+                } else if (response.status === 'not_authorized') {
+                    $('#fblogout').submit();
+                    // The person is logged into Facebook, but not your app.
+                    document.getElementById('status').innerHTML = 'Please log ' + 'into this app.';
+                } else {
+                    $('#fblogout').submit();
+                    // The person is not logged into Facebook, so we're not sure if
+                    // they are logged into this app or not.
+                    document.getElementById('status').innerHTML = 'Please log ' + 'into Facebook.';
+                }
+            }
+
+            // This function is called when someone finishes with the Login
+            // Button.  See the onlogin handler attached to it in the sample
+            // code below.
+            function checkLoginState() {
+                FB.getLoginStatus(function(response) {
+                    statusChangeCallback(response);
+                });
+            }
+
+            window.fbAsyncInit = function() {
+            FB.init({
+                appId      : 'KEEEE',
+                cookie     : true,  // enable cookies to allow the server to access
+                                    // the session
+                xfbml      : true,  // parse social plugins on this page
+                version    : 'v2.5' // use graph api version 2.5
+            });
+
+            // Now that we've initialized the JavaScript SDK, we call
+            // FB.getLoginStatus().  This function gets the state of the
+            // person visiting this page and can return one of three states to
+            // the callback you provide.  They can be:
+            //
+            // 1. Logged into your app ('connected')
+            // 2. Logged into Facebook, but not your app ('not_authorized')
+            // 3. Not logged into Facebook and can't tell if they are logged into
+            //    your app or not.
+            //
+            // These three cases are handled in the callback function.
+
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+
+            };
+
+            // Load the SDK asynchronously
+            (function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+
+            // Here we run a very simple test of the Graph API after login is
+            // successful.  See statusChangeCallback() for when this call is made.
+            function testAPI() {
+                console.log('Welcome!  Fetching your information.... ');
+                FB.api('/me','GET',{'fields': 'email,friends,name'}, function(response) {
+                    console.log('Successful login for: ' + response.name);
+                    document.getElementById('status').innerHTML = 'Thanks for logging in, ' + response.name + '!';
+                    document.getElementById('nick').value = response.name;
+                    document.getElementById('fbid').value = response.id;
+                    console.log(document.getElementById('fbid').value);
+                    
+                    $('#fblogin').submit();
+                    // $('#fbid').change(function(){
+                    //     $('#fblogin').submit();
+                    // });
+                });
+            }
+        </script>
+</head>
+<body>
+<div id="header">
+    <div id ="login">
+       <div class="fb-login-button" data-max-rows="5" data-size="large" data-show-faces="true" data-auto-logout-link="true" onlogin ="checkLoginState();">
+       </div>
+
+       <div id="status">
+       </div>
+    </div>
+    <a href="/users/edit_profile/">Edit Profile</a>
+</div>
+	<h1>Dashboard</h1>
+    <h2>Welcome, {{ info['nick'] }}</h2>
+	<!-- <a href="/edit"><button>Edit Location(s)</button></a> -->
+	<div id='map'></div>
+    <div id='locations'>
+        <h2>Your Locations</h2>
+        <a href="/add"><button class='user_button'>Add Location</button></a>
+        <hr>
+        <div id="table_container">
+        <table id="table_dash">
+            <thead>
+                <tr>
+                    <th>Location Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for locale in user_locations %}
+                <tr>
+                    <td><a href="/loc/{{locale['longitude']}}/{{locale['latitude']}}">{{locale['loc_name']}}</a></td>
+                    <td><button class='user_button'><a class = 'user_button' href="/locations/delete/{{locale['id']}}">Delete</a></button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <a href=""></a>
+        
+
+	</div>
+    <form id="fblogout" action='/logout'>
+        <input type="hidden" name="logout" value='True'>
+    </form>
+</body>
+</html>
